@@ -94,14 +94,8 @@ network() {
             "Show Network Details") 
                 ;;
             "Enable/Disable Network Card") 
-                read -p "Enter interface name to enable/disable: " interface
-                read -p "Enable (1) or Disable (2): " action
                 ;;
             "Set IP Address") 
-                read -p "Enter interface name: " interface
-                read -p "Enter IP address to set (e.g., 192.168.1.10/24): " ip_address
-                sudo ip addr add $ip_address dev $interface
-                echo "IP address $ip_address set on $interface."
                 ;;
             "List Wi-Fi Networks and Connect") 
                 ;;
