@@ -1,8 +1,19 @@
 #!/bin/bash
+BLACK='\033[0;30m'
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+BLUE='\033[0;34m'
+MAGENTA='\033[0;35m'
+LMAGENTA='\033[1;35m'
+CYAN='\033[0;36m'
+WHITE='\033[0;37m'
+ORANGE='\033[1;33m'
+
 
 main_menu() {
     clear
-    echo "UNIX Management Tool"
+    echo -e "${CYAN}UNIX Management Tool ${WHITE}"
 
     select choice in "System Status" "Backup" "Network" "Services" "User Management" "File Management" "Exit"
     do
@@ -28,7 +39,7 @@ main_menu() {
 }
 
 system_status() {
-    echo "System Status"
+    echo -e "${MAGENTA}System Status ${WHITE}"
     select sys_choice in "Check Memory Status" "Check CPU Temperature" "List Active Processes" "Stop a Process" "Back to Main Menu"
     do
         case $sys_choice in
@@ -41,7 +52,7 @@ system_status() {
                     echo "CPU Temperature: $temp°C"
                     if [ (( $(echo "$temp > 70" | bc -l) )) ]
                     then
-                        echo "Warning: CPU temperature exceeds safe limit!"
+                        echo -e "{${RED}Warning: CPU temperature exceeds safe limit! ${WHITE}"
                     fi
                 else
                     echo "The 'sensors' command is not available. Please install 'lm-sensors'."
@@ -68,7 +79,7 @@ system_status() {
 }
 
 backup() {
-    echo "Backup"
+    echo -e "${BLUE}Backup ${WHITE}"
     select backup_choice in "Schedule a Backup" "Show Last Backup Time" "Back to Main Menu"
     do
         case $backup_choice in
@@ -87,7 +98,7 @@ backup() {
 }
 
 network() {
-    echo "Network"
+    echo -e "${YELLOW}Network ${WHITE}"
     select net_choice in "Show Network Details" "Enable/Disable Network Card" "Set IP Address" "List Wi-Fi Networks and Connect" "Back to Main Menu"
     do
         case $net_choice in
@@ -109,7 +120,7 @@ network() {
 }
 
 services() {
-    echo "Services"
+    echo -e "${GREEN}Services ${WHITE}"
     select serv_choice in "Show Services" "Start a Service" "Stop a Service" "Back to Main Menu"
     do
         case $serv_choice in
@@ -129,7 +140,7 @@ services() {
 }
 
 user_management() {
-    echo "User Management"
+    echo -e "${LMAGENTA}User Management ${WHITE}"
     select user_choice in "Add User" "Delete User" "Show Connected Users" "Show User Groups" "Disconnect Remote User" "Change User Group" "Back to Main Menu"
     do
         case $user_choice in
@@ -169,7 +180,7 @@ user_management() {
 }
 
 file_management() {
-    echo "File Management"
+    echo -e "${ORANGE}File Management ${WHITE}"
     select file_choice in "Search for a file in user’s directory" "Show 10 Largest Files" "Show 10 Oldest Files" "Send File via Email" "Back to Main Menu"
     do
         case $file_choice in
