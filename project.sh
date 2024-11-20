@@ -50,7 +50,8 @@ system_status() {
     select sys_choice in "Check Memory Status" "Check CPU Temperature" "List Active Processes" "Stop a Process" "Back to Main Menu"
     do
         case $sys_choice in
-            "Check Memory Status") free -h 
+            "Check Memory Status") 
+            free -h 
                 ;;
             "Check CPU Temperature") 
                 if [ command -v sensors &> /dev/null ]
