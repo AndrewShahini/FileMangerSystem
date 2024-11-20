@@ -125,10 +125,17 @@ services() {
     do
         case $serv_choice in
             "Show Services") 
+            systemctl list-units --type=service
                ;;
             "Start a Service") 
+            read -p "Enter service name to start: " service
+                sudo systemctl start $service
+                echo "$service started."
                ;;
             "Stop a Service") 
+            read -p "Enter service name to stop: " service
+                sudo systemctl stop $service
+                echo "$service stopped."
                ;;
             "Back to Main Menu") 
                return 
