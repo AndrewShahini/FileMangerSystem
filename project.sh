@@ -85,8 +85,29 @@ backup() {
         case $backup_choice in
             "Schedule a Backup") 
                 read -p "Enter the file path to backup: " file_path
+                if [ ! -e "$file_path" ]; then
+                    echo "File path does not exist."
+                    continue
+                fi
+                read -p "Enter backup destination: " backup_dest
+                if [ ! -d "$backup_dest" ]; then
+                    echo "Backup destination does not exist."
+                    continue
+                fi
+                read -p "Enter day of week for backup (0-6, Sun=0): " day
+                read -p "Enter hour (0-23) for backup: " hour
+                read -p "Enter minute (0-59) for backup: " minute
+
+                cronjob="$minute $hour * * $day cp $file_path $backup_dest && echo \"$(date): Backup completed for $file_path\" >> ~/backup_log.txt"
+                (crontab -l 2>/dev/null; echo "$cronjob") | crontab -
+                echo "Backup scheduled."
                 ;;
             "Show Last Backup Time") 
+                if [ -f ~/backup_log.txt ]; then
+                    tail -n 1 ~/backup_log.txt
+                else
+                    echo "No backup log found."
+                fi
                 ;;
             "Back to Main Menu") 
                 return 
