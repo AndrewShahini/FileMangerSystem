@@ -103,6 +103,11 @@ backup() {
                 echo "Backup scheduled."
                 ;;
             "Show Last Backup Time") 
+                if [ -f ~/backup_log.txt ]; then
+                    tail -n 1 ~/backup_log.txt
+                else
+                    echo "No backup log found."
+                fi
                 ;;
             "Back to Main Menu") 
                 return 
