@@ -18,19 +18,26 @@ main_menu() {
     select choice in "System Status" "Backup" "Network" "Services" "User Management" "File Management" "Exit"
     do
         case $choice in
-            "System Status") system_status 
+            "System Status") 
+            system_status 
                 ;;
-            "Backup") backup 
+            "Backup") 
+            backup 
                 ;;
-            "Network") network 
+            "Network") 
+            network 
                 ;;
-            "Services") services 
+            "Services") 
+            services 
                 ;;
-            "User Management") user_management  
+            "User Management") 
+            user_management  
                 ;;
-            "File Management") file_management 
+            "File Management") 
+            file_management 
                 ;;
-            "Exit") echo -e "Exiting..."; exit 0 
+            "Exit") 
+            echo -e "Exiting..."; exit 0 
                 ;;
             *) echo "Invalid option! Please select a number from the list." 
                 ;;
@@ -58,7 +65,8 @@ system_status() {
                     echo "The 'sensors' command is not available. Please install 'lm-sensors'."
                 fi
                 ;;
-            "List Active Processes") ps aux 
+            "List Active Processes") 
+            ps aux 
                ;;
             "Stop a Process") 
                 read -p "Enter PID of process to stop: " pid
