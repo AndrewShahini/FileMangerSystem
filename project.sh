@@ -178,39 +178,72 @@ services() {
 
 user_management() {
     echo -e "${LMAGENTA}User Management ${WHITE}"
-    select user_choice in "Add User" "Delete User" "Show Connected Users" "Show User Groups" "Disconnect Remote User" "Change User Group" "Back to Main Menu"
+    select user_choice in "Add User" "Give Root Permmission to User" "Delete User" "Show Connected Users" "Show User Groups" "Disconnect Remote User" "Change User Group" "Back to Main Menu"
     do
         case $user_choice in
-            "Add User") 
-                ;;
-            "Delete User") 
+            "Add User")
+		read -p "Enter the username for your new user: " username
+		if id "$username" $>/dev/null; then
+		    echo "The username $username already exists"
+		else
+		    sudo useradd -m $username
+		    sudo passwd $username
+		fi
+		;;
+	    "Give Root Permision to a User")
+		read -p "Enter the username to give permission to: " username
+		if id "$username" &>/dev/null; then
+		    sudo usermod -g 0 -o $username
+		else
+		    echo "User $username does not exist"
+		fi
+		;;
+            "Delete User")
                 read -p "Enter username to delete: " username
-                if [ id "$username" &>/dev/null ]
-                then
+                if id "$username" &>/dev/null; then
                     sudo deluser $username
                 else
                     echo "User $username does not exist."
                 fi
                 ;;
-            "Show Connected Users") who 
+            "Show Connected Users"
+		echo "Showing connected users"
+		who
                 ;;
-            "Show User Groups") 
+            "Show User Groups")
                 read -p "Enter username to list groups: " username
-                if [ id "$username" &>/dev/null ]
-                then
+                if id "$username" &>/dev/null; then
                     groups $username
                 else
                     echo "User $username does not exist."
                 fi
                 ;;
             "Disconnect Remote User")
+		read -p "Enter username to disconnect: " username
+		if who | grep -q "$username"; then
+		    terminal=$(who | awk '$1 == "username" { print $2 }')
+		    sudo pkill -t "$terminal"
+		else
+		    echo "The remote user $username is not currently connected"
+		fi
                 ;;
             "Change User Group")
+		read -p "Enter the username to have group changed: " username
+		if id "$username" $>/dev/null; then
+		    read -p "Enter the group name to change to: " groupname
+			if id "$groupname" $>/dev/null; then
+			    sudo usermod -g $groupname $username
+			else
+			    echo "Group $groupname does not exist."
+			fi
+		else
+		    echo "User $username does not exist."
+		fi
                 ;;
-            "Back to Main Menu") 
-                return 
+            "Back to Main Menu")
+                return
                 ;;
-            *) echo "Invalid option! Please select a number from the list." 
+            *) echo "Invalid option! Please select a number from the list."
                 ;;
         esac
     done
