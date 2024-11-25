@@ -254,13 +254,50 @@ file_management() {
     select file_choice in "Search for a file in user’s directory" "Show 10 Largest Files" "Show 10 Oldest Files" "Send File via Email" "Back to Main Menu"
     do
         case $file_choice in
-            "Search for a file in user’s directory") 
+            "Search for a file in user’s directory")
+		read -p "Enter username of file's location: " username
+		cd ~username
+		if [ $? -eq 0]; then
+		    read -p "Enter the name of the file: " filename
+		    if [ -e filename ]; then
+			realpath $filename
+		    else
+			echo "File $filename does not exist."
+		    fi
+		else
+		    echo "User $username does not exist."
+		fi
                 ;;
-            "Show 10 Largest Files") 
+            "Show 10 Largest Files")
+		echo "Displaying your 10 largest files..."
+		ls -lS | head
                 ;;
-            "Show 10 Oldest Files") 
+            "Show 10 Oldest Files")
+		echo "Dislaying your 10 oldest files..."
+		ls -lt | tail
                 ;;
-            "Send File via Email") 
+            "Send File via Email")
+		read -p "Enter file to be sent by email: " filename
+		if [ -e "$filename" ]; then
+		    read -p "Enter the email of the recipient: " email
+		    if [[ "$email" =~ ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$ ]]; then
+			read -p "Are you sure you want to send $filename to $email? [y/n]: " answer
+			if [[ "$answer" == [yY] ]]; then"
+			    ATTACHMENT=$(realpath "$filename")
+			    echo "Email sent from Bash." | mailx -s "$filename Attached" -A "ATTACHMENT" "$email"
+			    if [ $? -eq 0 ]; then
+				echo "Email sent successfully."
+			    else
+				echo "Email failed to send."
+			    fi
+			else
+			    echo "Email will not be sent."
+			fi
+		    else
+			echo "The email $email is not a valid email."
+		    fi
+		else
+		    echo "The file $filename does not exist in the directory $(pwd)."
                 ;;
             "Back to Main Menu") 
                 return 
@@ -272,3 +309,4 @@ file_management() {
 }
 
 main_menu
+ 
