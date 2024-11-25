@@ -53,6 +53,10 @@ system_status() {
                     if [ (( $(echo "$temp > 70" | bc -l) )) ]
                     then
                         echo -e "{${RED}Warning: CPU temperature exceeds safe limit! ${WHITE}"
+                        for i in { 1..4 }
+                        do
+                            speaker-test -t sine -f 1000 -l 1 & sleep .2 && kill -9 $!
+                        done
                     fi
                 else
                     echo "The 'sensors' command is not available. Please install 'lm-sensors'."
