@@ -54,12 +54,11 @@ system_status() {
             free -h 
                 ;;
             "Check CPU Temperature") 
-                if [ command -v sensors &> /dev/null ]
+                if command -v sensors &> /dev/null; then
                 then
                     temp=$(sensors | awk '/^temp1:/{print $2}' | tr -d '+°C')
                     echo "CPU Temperature: $temp°C"
-                    if [ (( $(echo "$temp > 70" | bc -l) )) ]
-                    then
+                    if [ (( $(echo "$temp > 70" | bc -l) )) }; then
                         echo -e "{${RED}Warning: CPU temperature exceeds safe limit! ${WHITE}"
                     fi
                 else
