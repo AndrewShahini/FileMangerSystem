@@ -55,10 +55,9 @@ system_status() {
                 ;;
             "Check CPU Temperature") 
                 if command -v sensors &> /dev/null; then
-                then
                     temp=$(sensors | awk '/^temp1:/{print $2}' | tr -d '+°C')
                     echo "CPU Temperature: $temp°C"
-                    if [ (( $(echo "$temp > 70" | bc -l) )) }; then
+                    if (( $(echo "$temp > 70" | bc -l) )) ; then
                         echo -e "{${RED}Warning: CPU temperature exceeds safe limit! ${WHITE}"
                         for i in { 1..4 }
                         do
@@ -209,7 +208,7 @@ user_management() {
                     echo "User $username does not exist."
                 fi
                 ;;
-            "Show Connected Users"
+            "Show Connected Users")
 		echo "Showing connected users"
 		who
                 ;;
@@ -285,7 +284,7 @@ file_management() {
 		    read -p "Enter the email of the recipient: " email
 		    if [[ "$email" =~ ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$ ]]; then
 			read -p "Are you sure you want to send $filename to $email? [y/n]: " answer
-			if [[ "$answer" == [yY] ]]; then"
+			if [[ "$answer" == [yY] ]]; then
 			    ATTACHMENT=$(realpath "$filename")
 			    echo "Email sent from Bash." | mailx -s "$filename Attached" -A "ATTACHMENT" "$email"
 			    if [ $? -eq 0 ]; then
@@ -311,5 +310,4 @@ file_management() {
     done
 }
 
-main_menu
- 
+main_menu 
