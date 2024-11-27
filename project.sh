@@ -179,7 +179,7 @@ services() {
 
 user_management() {
     echo -e "${LMAGENTA}User Management ${WHITE}"
-    select user_choice in "Add User" "Give Root Permmission to User" "Delete User" "Show Connected Users" "Show User Groups" "Disconnect Remote User" "Change User Group" "Back to Main Menu"
+    select user_choice in "Add User" "Give Root Permission to User" "Delete User" "Show Connected Users" "Show User Groups" "Disconnect Remote User" "Change User Group" "Back to Main Menu"
     do
         case $user_choice in
             "Add User")
