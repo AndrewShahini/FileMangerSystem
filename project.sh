@@ -73,8 +73,7 @@ system_status() {
                ;;
             "Stop a Process") 
                 read -p "Enter PID of process to stop: " pid
-                if [ ps -p $pid > /dev/null ]
-                then
+                if ps -p $pid > /dev/null; then
                     kill $pid
                     echo "Process $pid stopped."
                 else
