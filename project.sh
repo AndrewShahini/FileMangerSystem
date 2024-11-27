@@ -194,7 +194,7 @@ user_management() {
 	    "Give Root Permission to User")
 		read -p "Enter the username to give permission to: " username
 		if id "$username" &>/dev/null; then
-		    sudo usermod -g 0 -o $username
+		    sudo usermod -a -G root $username
 		else
 		    echo "User $username does not exist"
 		fi
