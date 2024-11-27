@@ -257,7 +257,7 @@ file_management() {
         case $file_choice in
             "Search for a file in user’s directory")
 		read -p "Enter username of file's location: " username
-		cd ~username
+		cd $username
 		if [ $? -eq 0]; then
 		    read -p "Enter the name of the file: " filename
 		    if [ -e filename ]; then
