@@ -191,7 +191,7 @@ user_management() {
 		    sudo passwd $username
 		fi
 		;;
-	    "Give Root Permision to a User")
+	    "Give Root Permision to User")
 		read -p "Enter the username to give permission to: " username
 		if id "$username" &>/dev/null; then
 		    sudo usermod -g 0 -o $username
