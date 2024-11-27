@@ -300,6 +300,7 @@ file_management() {
 		    fi
 		else
 		    echo "The file $filename does not exist in the directory $(pwd)."
+      		fi
                 ;;
             "Back to Main Menu") 
                 return 
