@@ -10,21 +10,21 @@ CYAN='\033[0;36m'
 WHITE='\033[0;37m'
 ORANGE='\033[1;33m'
 
+clear
 
 main_menu() {
-    clear
     echo -e "${CYAN}=================================="
     echo -e "        UNIX Management Tool"
     echo -e "==================================${WHITE}"
-
+    PS3="Please select a choice: "
     select choice in "System Status" "Backup" "Network" "Services" "User Management" "File Management" "Exit"
     do
         case $choice in
             "System Status") 
-            system_status 
+            system_status
                 ;;
             "Backup") 
-            backup 
+            backup
                 ;;
             "Network") 
             network 
@@ -39,7 +39,7 @@ main_menu() {
             file_management 
                 ;;
             "Exit") 
-            echo -e "Exiting..."; exit 0 
+            echo -e "${GREEN}Exiting...${WHITE}"; exit 0 
                 ;;
             *) echo "Invalid option! Please select a number from the list." 
                 ;;
@@ -83,8 +83,7 @@ system_status() {
                 fi
                 ;;
             "Back to Main Menu") 
-	    	echo -e "${GREEN} Please press enter ${WHITE}"
-     		return 
+	    	main_menu
                 ;;
             *) echo "Invalid option! Please select a number from the list." 
                 ;;
@@ -125,8 +124,7 @@ backup() {
                 fi
                 ;;
             "Back to Main Menu") 
-	    	echo -e "${GREEN} Please press enter ${WHITE}"
-                return 
+	    	main_menu
                 ;;
             *) echo "Invalid option! Please select a number from the list." 
                 ;;
@@ -148,8 +146,7 @@ network() {
             "List Wi-Fi Networks and Connect") 
                 ;;
             "Back to Main Menu")
-	       echo -e "${GREEN} Please press enter ${WHITE}"
-               return 
+	       main_menu
                ;;
             *) echo "Invalid option! Please select a number from the list." 
               ;;
@@ -176,8 +173,7 @@ services() {
                 echo "$service stopped."
                ;;
             "Back to Main Menu") 
-	       echo -e "${GREEN} Please press enter ${WHITE}"
-               return 
+	       main_menu
                ;;
             *) echo "Invalid option! Please select a number from the list." 
               ;;
@@ -250,8 +246,7 @@ user_management() {
 		fi
                 ;;
             "Back to Main Menu")
-	    	echo -e "${GREEN} Please press enter ${WHITE}"
-                return
+	    	main_menu
                 ;;
             *) echo "Invalid option! Please select a number from the list."
                 ;;
@@ -311,8 +306,7 @@ file_management() {
       		fi
                 ;;
             "Back to Main Menu") 
-	    	echo -e "${GREEN} Please press enter ${WHITE}"
-                return 
+	    	main_menu 
                 ;;
             *) echo "Invalid option! Please select a number from the list." 
                 ;;
