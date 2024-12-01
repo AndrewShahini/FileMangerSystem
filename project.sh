@@ -13,7 +13,9 @@ ORANGE='\033[1;33m'
 
 main_menu() {
     clear
-    echo -e "${CYAN}UNIX Management Tool ${WHITE}"
+    echo -e "${CYAN}=================================="
+    echo -e "        UNIX Management Tool"
+    echo -e "==================================${WHITE}"
 
     select choice in "System Status" "Backup" "Network" "Services" "User Management" "File Management" "Exit"
     do
@@ -80,7 +82,9 @@ system_status() {
                     echo "Invalid PID. Process not found."
                 fi
                 ;;
-            "Back to Main Menu") return 
+            "Back to Main Menu") 
+	    	echo -e "${GREEN} Please press enter ${WHITE}"
+     		return 
                 ;;
             *) echo "Invalid option! Please select a number from the list." 
                 ;;
@@ -91,6 +95,7 @@ system_status() {
 backup() {
     echo -e "${BLUE}Backup ${WHITE}"
     select backup_choice in "Schedule a Backup" "Show Last Backup Time" "Back to Main Menu"
+    
     do
         case $backup_choice in
             "Schedule a Backup") 
@@ -120,6 +125,7 @@ backup() {
                 fi
                 ;;
             "Back to Main Menu") 
+	    	echo -e "${GREEN} Please press enter ${WHITE}"
                 return 
                 ;;
             *) echo "Invalid option! Please select a number from the list." 
@@ -142,6 +148,7 @@ network() {
             "List Wi-Fi Networks and Connect") 
                 ;;
             "Back to Main Menu")
+	       echo -e "${GREEN} Please press enter ${WHITE}"
                return 
                ;;
             *) echo "Invalid option! Please select a number from the list." 
@@ -169,6 +176,7 @@ services() {
                 echo "$service stopped."
                ;;
             "Back to Main Menu") 
+	       echo -e "${GREEN} Please press enter ${WHITE}"
                return 
                ;;
             *) echo "Invalid option! Please select a number from the list." 
@@ -242,6 +250,7 @@ user_management() {
 		fi
                 ;;
             "Back to Main Menu")
+	    	echo -e "${GREEN} Please press enter ${WHITE}"
                 return
                 ;;
             *) echo "Invalid option! Please select a number from the list."
@@ -302,6 +311,7 @@ file_management() {
       		fi
                 ;;
             "Back to Main Menu") 
+	    	echo -e "${GREEN} Please press enter ${WHITE}"
                 return 
                 ;;
             *) echo "Invalid option! Please select a number from the list." 
