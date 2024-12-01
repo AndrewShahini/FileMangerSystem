@@ -14,7 +14,7 @@ clear
 
 main_menu() {
     echo -e "${CYAN}=================================="
-    echo -e "        UNIX Management Tool"
+    echo -e "      UNIX Management Tool"
     echo -e "==================================${WHITE}"
     PS3="Please select a choice: "
     select choice in "System Status" "Backup" "Network" "Services" "User Management" "File Management" "Exit"
@@ -74,6 +74,7 @@ system_status() {
             ps aux 
                ;;
             "Stop a Process") 
+	    	ps aux | awk '{print $1, $11}'
                 read -p "Enter PID of process to stop: " pid
                 if ps -p $pid > /dev/null; then
                     kill $pid
@@ -162,12 +163,14 @@ services() {
             "Show Services") 
             systemctl list-units --type=service
                ;;
-            "Start a Service") 
+            "Start a Service")
+	    systemctl list-units --type=service | awk 'NR > 1 {print $1}' | head -n -7
             read -p "Enter service name to start: " service
                 sudo systemctl start $service
                 echo "$service started."
                ;;
-            "Stop a Service") 
+            "Stop a Service")
+	    systemctl list-units --type=service | awk 'NR > 1 {print $1}' | head -n -7
             read -p "Enter service name to stop: " service
                 sudo systemctl stop $service
                 echo "$service stopped."
