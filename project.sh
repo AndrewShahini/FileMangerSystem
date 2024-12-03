@@ -81,9 +81,9 @@ system_status() {
                 read -p "Enter PID of process to stop: " pid
                 if ps -p $pid > /dev/null; then
                     kill $pid
-                    echo "Process $pid stopped."
+                    echo -e "${ORANGE}Process $pid stopped.${WHITE}"
                 else
-                    echo "Invalid PID. Process not found."
+                    echo -e "${RED}Invalid PID. Process not found.${WHITE}"
                 fi
 		echo -e "${BLUE} Returning to System Status Menu... ${WHITE}"
                 ;;
