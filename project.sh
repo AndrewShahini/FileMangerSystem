@@ -60,7 +60,7 @@ system_status() {
                     temp=$(sensors | awk '/^temp1:/{print $2}' | tr -d '+°C')
                     echo "CPU Temperature: $temp°C"
                     if (( $(echo "$temp > 70" | bc -l) )) ; then
-                        echo -e "{${RED}Warning: CPU temperature exceeds safe limit! ${WHITE}"
+                        echo -e "${RED}Warning: CPU temperature exceeds safe limit! ${WHITE}"
                         for i in { 1..4 }
                         do
                             speaker-test -t sine -f 1100 -l 1 & sleep .2 && kill -9 $!
@@ -86,7 +86,7 @@ system_status() {
             "Back to Main Menu") 
 	    	main_menu
                 ;;
-            *) echo "Invalid option! Please select a number from the list." 
+            *) echo -e "${RED}Invalid option! Please select a number from the list.${WHITE}" 
                 ;;
         esac
     done
@@ -127,7 +127,7 @@ backup() {
             "Back to Main Menu") 
 	    	main_menu
                 ;;
-            *) echo "Invalid option! Please select a number from the list." 
+            *) echo -e "${RED}Invalid option! Please select a number from the list. ${WHITE}" 
                 ;;
         esac
     done
