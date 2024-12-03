@@ -16,7 +16,7 @@ main_menu() {
     echo -e "${CYAN}=================================="
     echo -e "      UNIX Management Tool"
     echo -e "==================================${WHITE}"
-    PS3="Please select a choice: "
+    PS3=$(echo -e "${CYAN}Please select a choice: ${WHITE}")
     select choice in "System Status" "Backup" "Network" "Services" "User Management" "File Management" "Exit"
     do
         case $choice in
@@ -41,20 +41,21 @@ main_menu() {
             "Exit") 
             echo -e "${GREEN}Exiting...${WHITE}"; exit 0 
                 ;;
-            *) echo "Invalid option! Please select a number from the list." 
+            *) echo -e "${RED}Invalid option! Please select a number from the list.${WHITE}" 
                 ;;
         esac
     done
 }
 
 system_status() {
-    echo -e "${MAGENTA}System Status ${WHITE}"
+    echo -e "${MAGENTA}System Status Menu${WHITE}"
     select sys_choice in "Check Memory Status" "Check CPU Temperature" "List Active Processes" "Stop a Process" "Back to Main Menu"
     do
         case $sys_choice in
             "Check Memory Status") 
             free -h 
-                ;;
+	    echo -e "${BLUE} Returning to System Status Menu... ${WHITE}"
+     	    ;;
             "Check CPU Temperature") 
                 if command -v sensors &> /dev/null; then
                     temp=$(sensors | awk '/^temp1:/{print $2}' | tr -d '+°C')
@@ -67,12 +68,14 @@ system_status() {
                         done
                     fi
                 else
-                    echo "The 'sensors' command is not available. Please install 'lm-sensors'."
+                    echo -e "${RED}The 'sensors' command is not available. Please install 'lm-sensors'.${WHITE}"
                 fi
+		echo -e "${BLUE} Returning to System Status Menu... ${WHITE}"
                 ;;
             "List Active Processes") 
-            ps aux 
-               ;;
+            	ps aux 
+	    	echo -e "${BLUE} Returning to System Status Menu... ${WHITE}"
+                ;;
             "Stop a Process") 
 	    	ps aux | awk '{print $2, $11}'
                 read -p "Enter PID of process to stop: " pid
@@ -82,6 +85,7 @@ system_status() {
                 else
                     echo "Invalid PID. Process not found."
                 fi
+		echo -e "${BLUE} Returning to System Status Menu... ${WHITE}"
                 ;;
             "Back to Main Menu") 
 	    	main_menu
@@ -95,7 +99,6 @@ system_status() {
 backup() {
     echo -e "${BLUE}Backup ${WHITE}"
     select backup_choice in "Schedule a Backup" "Show Last Backup Time" "Back to Main Menu"
-    
     do
         case $backup_choice in
             "Schedule a Backup") 
@@ -185,29 +188,32 @@ network() {
 }
 
 services() {
-    echo -e "${GREEN}Services ${WHITE}"
+    echo -e "${GREEN}Services Menu${WHITE}"
     select serv_choice in "Show Services" "Start a Service" "Stop a Service" "Back to Main Menu"
     do
         case $serv_choice in
             "Show Services") 
             systemctl list-units --type=service
+	    echo -e "${YELLOW}Returning to Services Menu...${WHITE}"
                ;;
             "Start a Service")
 	    systemctl list-units --type=service | awk 'NR > 1 {print $1}' | head -n -7
             read -p "Enter service name to start: " service
-                sudo systemctl start $service
-                echo "$service started."
+            sudo systemctl start $service
+            echo -e "${GREEN}$service started.${WHITE}"
+	    echo -e "${YELLOW}Returning to Services Menu...${WHITE}"
                ;;
             "Stop a Service")
 	    systemctl list-units --type=service | awk 'NR > 1 {print $1}' | head -n -7
             read -p "Enter service name to stop: " service
-                sudo systemctl stop $service
-                echo "$service stopped."
+            sudo systemctl stop $service
+            echo -e "${ORANGE}$service stopped.${WHITE}"
+	    echo -e "${YELLOW}Returning to Services Menu...${WHITE}"
                ;;
             "Back to Main Menu") 
 	       main_menu
                ;;
-            *) echo "Invalid option! Please select a number from the list." 
+            *) echo -e "${RED}Invalid option! Please select a number from the list.${WHITE}" 
               ;;
         esac
     done
@@ -363,7 +369,7 @@ file_management() {
             "Back to Main Menu") 
 	    	main_menu 
                 ;;
-            *) echo "Invalid option! Please select a number from the list." 
+            *) echo -e "${RED}Invalid option! Please select a number from the list.${WHITE}" 
                 ;;
         esac
     done
