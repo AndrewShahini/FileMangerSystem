@@ -168,6 +168,8 @@ network() {
                 ;;
             "List Wi-Fi Networks and Connect") 
 	    	if command -v nmcli &> /dev/null; then
+      			nmcli dev wifi list
+	 	read -p "Enter SSID to connect:" ssid
       			nmcli dev wifi connect "$ssid"
 	 	else
    			echo "The 'ncmli' command is not available. Please install 'NetworkManager' ."
