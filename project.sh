@@ -10,27 +10,36 @@ CYAN='\033[0;36m'
 WHITE='\033[0;37m'
 ORANGE='\033[1;33m'
 
+clear
 
 main_menu() {
-    clear
-    echo -e "${CYAN}UNIX Management Tool ${WHITE}"
-
+    echo -e "${CYAN}=================================="
+    echo -e "      UNIX Management Tool"
+    echo -e "==================================${WHITE}"
+    PS3="Please select a choice: "
     select choice in "System Status" "Backup" "Network" "Services" "User Management" "File Management" "Exit"
     do
         case $choice in
-            "System Status") system_status 
+            "System Status") 
+            system_status
                 ;;
-            "Backup") backup 
+            "Backup") 
+            backup
                 ;;
-            "Network") network 
+            "Network") 
+            network 
                 ;;
-            "Services") services 
+            "Services") 
+            services 
                 ;;
-            "User Management") user_management  
+            "User Management") 
+            user_management  
                 ;;
-            "File Management") file_management 
+            "File Management") 
+            file_management 
                 ;;
-            "Exit") echo -e "Exiting..."; exit 0 
+            "Exit") 
+            echo -e "${GREEN}Exiting...${WHITE}"; exit 0 
                 ;;
             *) echo "Invalid option! Please select a number from the list." 
                 ;;
@@ -43,15 +52,14 @@ system_status() {
     select sys_choice in "Check Memory Status" "Check CPU Temperature" "List Active Processes" "Stop a Process" "Back to Main Menu"
     do
         case $sys_choice in
-            "Check Memory Status") free -h 
+            "Check Memory Status") 
+            free -h 
                 ;;
             "Check CPU Temperature") 
-                if [ command -v sensors &> /dev/null ]
-                then
+                if command -v sensors &> /dev/null; then
                     temp=$(sensors | awk '/^temp1:/{print $2}' | tr -d '+°C')
                     echo "CPU Temperature: $temp°C"
-                    if [ (( $(echo "$temp > 70" | bc -l) )) ]
-                    then
+                    if (( $(echo "$temp > 70" | bc -l) )) ; then
                         echo -e "{${RED}Warning: CPU temperature exceeds safe limit! ${WHITE}"
                         for i in { 1..4 }
                         do
@@ -62,19 +70,21 @@ system_status() {
                     echo "The 'sensors' command is not available. Please install 'lm-sensors'."
                 fi
                 ;;
-            "List Active Processes") ps aux 
+            "List Active Processes") 
+            ps aux 
                ;;
             "Stop a Process") 
+	    	ps aux | awk '{print $1, $11}'
                 read -p "Enter PID of process to stop: " pid
-                if [ ps -p $pid > /dev/null ]
-                then
+                if ps -p $pid > /dev/null; then
                     kill $pid
                     echo "Process $pid stopped."
                 else
                     echo "Invalid PID. Process not found."
                 fi
                 ;;
-            "Back to Main Menu") return 
+            "Back to Main Menu") 
+	    	main_menu
                 ;;
             *) echo "Invalid option! Please select a number from the list." 
                 ;;
@@ -85,6 +95,7 @@ system_status() {
 backup() {
     echo -e "${BLUE}Backup ${WHITE}"
     select backup_choice in "Schedule a Backup" "Show Last Backup Time" "Back to Main Menu"
+    
     do
         case $backup_choice in
             "Schedule a Backup") 
@@ -114,7 +125,7 @@ backup() {
                 fi
                 ;;
             "Back to Main Menu") 
-                return 
+	    	main_menu
                 ;;
             *) echo "Invalid option! Please select a number from the list." 
                 ;;
@@ -180,18 +191,20 @@ services() {
             "Show Services") 
             systemctl list-units --type=service
                ;;
-            "Start a Service") 
+            "Start a Service")
+	    systemctl list-units --type=service | awk 'NR > 1 {print $1}' | head -n -7
             read -p "Enter service name to start: " service
                 sudo systemctl start $service
                 echo "$service started."
                ;;
-            "Stop a Service") 
+            "Stop a Service")
+	    systemctl list-units --type=service | awk 'NR > 1 {print $1}' | head -n -7
             read -p "Enter service name to stop: " service
                 sudo systemctl stop $service
                 echo "$service stopped."
                ;;
             "Back to Main Menu") 
-               return 
+	       main_menu
                ;;
             *) echo "Invalid option! Please select a number from the list." 
               ;;
@@ -201,39 +214,87 @@ services() {
 
 user_management() {
     echo -e "${LMAGENTA}User Management ${WHITE}"
-    select user_choice in "Add User" "Delete User" "Show Connected Users" "Show User Groups" "Disconnect Remote User" "Change User Group" "Back to Main Menu"
+    select user_choice in "Add User" "Give Root Permission to User" "Delete User" "Show Connected Users" "Show User Groups" "Disconnect Remote User" "Change User Group" "Back to Main Menu"
     do
         case $user_choice in
-            "Add User") 
-                ;;
-            "Delete User") 
+            "Add User")
+		read -p "Enter the username for your new user: " username
+		if id "$username" &>/dev/null; then
+		    echo -e "${RED}The username $username already exists${WHITE}"
+		else
+		    echo "Adding the new user $username..."
+		    sudo useradd -m $username
+		    echo "Creating the password for $username..."
+		    sudo passwd $username
+		    echo -e "${LMAGENTA}User $username has been successfully added! ${WHITE}"
+		fi
+		echo -e "${LMAGENTA}Returning to User Management... ${WHITE}"
+		;;
+	    "Give Root Permission to User")
+		read -p "Enter the username to give permission to: " username
+		if id "$username" &>/dev/null; then
+		    sudo usermod -a -G root $username
+		    echo -e "${LMAGENTA}User $username has been given root permissions${WHITE}"
+		else
+		    echo -e "${RED}User $username does not exist ${WHITE}"
+		fi
+		echo -e "${LMAGENTA}Returning to User Management... ${WHITE}"
+		;;
+            "Delete User")
                 read -p "Enter username to delete: " username
-                if [ id "$username" &>/dev/null ]
-                then
-                    sudo deluser $username
+                if id "$username" &>/dev/null; then
+                    sudo userdel -r $username 2>/dev/null
+		    echo -e "${LMAGENTA}User $username has been successfully deleted! ${WHITE}"
                 else
-                    echo "User $username does not exist."
+                    echo -e "${RED}User $username does not exist ${WHITE}"
                 fi
+		echo -e "${LMAGENTA}Returning to User Management... ${WHITE}"
                 ;;
-            "Show Connected Users") who 
+            "Show Connected Users")
+		echo -e "${LMAGENTA}Showing connected users${WHITE}"
+		who | awk '{print $1}'
+		echo -e "${LMAGENTA}Returning to User Management... ${WHITE}"
                 ;;
-            "Show User Groups") 
+            "Show User Groups")
                 read -p "Enter username to list groups: " username
-                if [ id "$username" &>/dev/null ]
-                then
-                    groups $username
+                if id "$username" &>/dev/null; then
+                    echo -e "${LMAGENTA}Showing groups of $username... ${WHITE}"
+		    groups $username
                 else
-                    echo "User $username does not exist."
+                    echo -e "${RED}User $username does not exist.${WHITE}"
                 fi
+		echo -e "${LMAGENTA}Returning to User Management... ${WHITE}"
                 ;;
             "Disconnect Remote User")
+		read -p "Enter username to disconnect: " username
+		if who | grep -q "$username"; then
+		    terminal=$(who | awk -v user="$username" '$1 == user { print $2 }')
+		    sudo pkill -t "$terminal"
+		    echo -e "${LMAGENTA} The remote user ${CYAN}$username ${LMAGENTA}has been disconnected ${WHITE}"
+		else
+		    echo -e "${RED}The remote user $username is not currently connected ${WHITE}"
+		fi
+		echo -e "${LMAGENTA}Returning to User Management... ${WHITE}"
                 ;;
             "Change User Group")
+		read -p "Enter the username to have group changed: " username
+		if id "$username" &>/dev/null; then
+		    read -p "Enter the group name to change to: " groupname
+			if id "$groupname" &>/dev/null; then
+			    sudo usermod -g $groupname $username
+			    echo -e "${LMAGENTA}User $username has been added to $groupname ${WHITE}"
+			else
+			    echo -e "${RED}Group $groupname does not exist ${WHITE}"
+			fi
+		else
+		    echo -e "${RED}User $username does not exist${WHITE}"
+		fi
+		echo -e "${LMAGENTA}Returning to User Management... ${WHITE}"
                 ;;
-            "Back to Main Menu") 
-                return 
+            "Back to Main Menu")
+	    	main_menu
                 ;;
-            *) echo "Invalid option! Please select a number from the list." 
+            *) echo -e "${RED}Invalid option! Please select a number from the list. ${WHITE}"
                 ;;
         esac
     done
@@ -244,16 +305,58 @@ file_management() {
     select file_choice in "Search for a file in user’s directory" "Show 10 Largest Files" "Show 10 Oldest Files" "Send File via Email" "Back to Main Menu"
     do
         case $file_choice in
-            "Search for a file in user’s directory") 
+            "Search for a file in user’s directory")
+		read -p "Enter username of file's location: " username
+		if pushd "/home/$username" > /dev/null; then
+		    read -p "Enter the name of the file: " filename
+		    if [ -e "$filename" ]; then
+			realpath $filename
+		    else
+			echo -e "${RED}File $filename does not exist. ${WHITE}"
+		    fi
+		    popd > /dev/null
+		else
+		    echo -e "${RED}User $username does not exist. ${WHITE}"
+		fi
+		echo -e "${ORANGE}Returning to File Management... ${WHITE}"
                 ;;
-            "Show 10 Largest Files") 
+            "Show 10 Largest Files")
+		echo -e "${ORANGE}Displaying your 10 largest files... ${WHITE}"
+		ls -lS | head
+		echo -e "${ORANGE}Returning to File Management... ${WHITE}"
                 ;;
-            "Show 10 Oldest Files") 
+            "Show 10 Oldest Files")
+		echo -e "${ORANGE}Dislaying your 10 oldest files... ${WHITE}"
+		ls -lt | tail
+		echo -e "${ORANGE}Returning to File Management... ${WHITE}"
                 ;;
-            "Send File via Email") 
+            "Send File via Email")
+		read -p "Enter file to be sent by email: " filename
+		if [ -e "$filename" ]; then
+		    read -p "Enter the email of the recipient: " email
+		    if [[ "$email" =~ ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$ ]]; then
+			read -p "Are you sure you want to send $filename to $email? [y/n]: " answer
+			if [[ "$answer" == [yY] ]]; then
+			    ATTACHMENT=$(realpath "$filename")
+			    echo "Email sent from Bash." | mailx -s "$filename Attached" -A "$ATTACHMENT" "$email"
+			    if [ $? -eq 0 ]; then
+				echo -e "${ORANGE}Email sent successfully ${WHITE}"
+			    else
+				echo -e "${RED}Email failed to send ${WHITE}"
+			    fi
+			else
+			    echo -e "${RED}Email will not be sent ${WHITE}"
+			fi
+		    else
+			echo -e "${RED}The email $email is not a valid email ${WHITE}"
+		    fi
+		else
+		    echo -e "${RED}The file $filename does not exist in the directory $(pwd) ${WHITE}"
+      		fi
+		echo -e "${ORANGE}Returning to File Management... ${WHITE}"
                 ;;
             "Back to Main Menu") 
-                return 
+	    	main_menu 
                 ;;
             *) echo "Invalid option! Please select a number from the list." 
                 ;;
@@ -261,4 +364,4 @@ file_management() {
     done
 }
 
-main_menu
+main_menu 
