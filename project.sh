@@ -127,22 +127,50 @@ network() {
     select net_choice in "Show Network Details" "Enable/Disable Network Card" "Set IP Address" "List Wi-Fi Networks and Connect" "Back to Main Menu"
     do
         case $net_choice in
-            "Show Network Details") 
+            "Show Network Details")
+	    	if command -v ip &> /dev/null; then
+     			ip addr show
+		else
+  			ifconfig
+     		fi
                 ;;
             "Enable/Disable Network Card") 
+	    	nmcli device status | awk '{print $1}'
+	    	read -p "Enter interface name to ennble/disable" interface
+      		read -p "Enable (1) or Disable (2): " action
+		if [ "$action -eq 1 ]; then
+  			sudo ip link set $interface up
+     			echo "$interface enabled"
+       		elif [ $action -eq 2 ]; then
+	 		sudo ip link set $interface down
+    			echo "$interface disabled"
+      		else
+			echo"Invalid action selected."
+		fi
                 ;;
             "Set IP Address") 
+	    	nmcli device status | awk '{print $1}'
+	    	read -p "Enter interface name: " interface
+      		read -p "Enter IP address to set (e.g., 192.168.1.10/24): " ip_address
+		sudo ip addr add $ip_address dev $interface
+  			echo "IP address $ip_address set on $interface."
                 ;;
             "List Wi-Fi Networks and Connect") 
+	    	if [ command -v nmcli &> /dev/null ]; then
+      			nmcli dev wifi connect "$ssid"
+	 	else
+   			echo "The 'ncmli' commadn is not available. Please install 'NetworkManager' ."
+      		fi
                 ;;
             "Back to Main Menu")
-               return 
+	       main_menExam 
                ;;
             *) echo "Invalid option! Please select a number from the list." 
               ;;
         esac
     done
 }
+
 
 services() {
     echo -e "${GREEN}Services ${WHITE}"
