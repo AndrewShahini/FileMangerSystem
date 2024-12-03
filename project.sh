@@ -74,7 +74,7 @@ system_status() {
             ps aux 
                ;;
             "Stop a Process") 
-	    	ps aux | awk '{print $1, $11}'
+	    	ps aux | awk '{print $2, $11}'
                 read -p "Enter PID of process to stop: " pid
                 if ps -p $pid > /dev/null; then
                     kill $pid
@@ -147,7 +147,7 @@ network() {
                 ;;
             "Enable/Disable Network Card") 
 	    	nmcli device status | awk '{print $1}'
-	    	read -p "Enter interface name to enable/disable" interface
+	    	read -p "Enter interface name to enable/disable: " interface
       		read -p "Enable (1) or Disable (2): " action
 		if [ "$action" -eq 1 ]; then
   			sudo ip link set $interface up
@@ -232,6 +232,7 @@ user_management() {
 		echo -e "${LMAGENTA}Returning to User Management... ${WHITE}"
 		;;
 	    "Give Root Permission to User")
+     		awk -F: ‘{ print $1 }’ /etc/passwd
 		read -p "Enter the username to give permission to: " username
 		if id "$username" &>/dev/null; then
 		    sudo usermod -a -G root $username
@@ -242,6 +243,7 @@ user_management() {
 		echo -e "${LMAGENTA}Returning to User Management... ${WHITE}"
 		;;
             "Delete User")
+	    	awk -F: ‘{ print $1 }’ /etc/passwd
                 read -p "Enter username to delete: " username
                 if id "$username" &>/dev/null; then
                     sudo userdel -r $username 2>/dev/null
@@ -257,6 +259,7 @@ user_management() {
 		echo -e "${LMAGENTA}Returning to User Management... ${WHITE}"
                 ;;
             "Show User Groups")
+	    	awk -F: ‘{ print $1 }’ /etc/passwd
                 read -p "Enter username to list groups: " username
                 if id "$username" &>/dev/null; then
                     echo -e "${LMAGENTA}Showing groups of $username... ${WHITE}"
@@ -278,6 +281,7 @@ user_management() {
 		echo -e "${LMAGENTA}Returning to User Management... ${WHITE}"
                 ;;
             "Change User Group")
+	    	awk -F: ‘{ print $1 }’ /etc/passwd
 		read -p "Enter the username to have group changed: " username
 		if id "$username" &>/dev/null; then
 		    read -p "Enter the group name to change to: " groupname
