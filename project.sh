@@ -310,7 +310,7 @@ file_management() {
 			read -p "Are you sure you want to send $filename to $email? [y/n]: " answer
 			if [[ "$answer" == [yY] ]]; then
 			    ATTACHMENT=$(realpath "$filename")
-			    echo "Email sent from Bash." | mailx -s "$filename Attached" -a "$ATTACHMENT" "$email"
+			    echo "Email sent from Bash." | mailx -s "$filename Attached" -A "$ATTACHMENT" "$email"
 			    if [ $? -eq 0 ]; then
 				echo -e "${ORANGE}Email sent successfully ${WHITE}"
 			    else
