@@ -147,16 +147,16 @@ network() {
                 ;;
             "Enable/Disable Network Card") 
 	    	nmcli device status | awk '{print $1}'
-	    	read -p "Enter interface name to ennble/disable" interface
+	    	read -p "Enter interface name to enable/disable" interface
       		read -p "Enable (1) or Disable (2): " action
-		if [ "$action -eq 1 ]; then
+		if [ "$action" -eq 1 ]; then
   			sudo ip link set $interface up
      			echo "$interface enabled"
-       		elif [ $action -eq 2 ]; then
+       		elif [ "$action" -eq 2 ]; then
 	 		sudo ip link set $interface down
     			echo "$interface disabled"
       		else
-			echo"Invalid action selected."
+			echo "Invalid action selected."
 		fi
                 ;;
             "Set IP Address") 
@@ -167,14 +167,14 @@ network() {
   			echo "IP address $ip_address set on $interface."
                 ;;
             "List Wi-Fi Networks and Connect") 
-	    	if [ command -v nmcli &> /dev/null ]; then
+	    	if command -v nmcli &> /dev/null; then
       			nmcli dev wifi connect "$ssid"
 	 	else
-   			echo "The 'ncmli' commadn is not available. Please install 'NetworkManager' ."
+   			echo "The 'ncmli' command is not available. Please install 'NetworkManager' ."
       		fi
                 ;;
             "Back to Main Menu")
-	       main_menExam 
+	       main_menu 
                ;;
             *) echo "Invalid option! Please select a number from the list." 
               ;;
