@@ -191,67 +191,82 @@ user_management() {
         case $user_choice in
             "Add User")
 		read -p "Enter the username for your new user: " username
-		if id "$username" $>/dev/null; then
-		    echo "The username $username already exists"
+		if id "$username" &>/dev/null; then
+		    echo -e "${RED}The username $username already exists${WHITE}"
 		else
+		    echo "Adding the new user $username..."
 		    sudo useradd -m $username
+		    echo "Creating the password for $username..."
 		    sudo passwd $username
+		    echo -e "${LMAGENTA}User $username has been successfully added! ${WHITE}"
 		fi
+		echo -e "${LMAGENTA}Returning to User Management... ${WHITE}"
 		;;
 	    "Give Root Permission to User")
 		read -p "Enter the username to give permission to: " username
 		if id "$username" &>/dev/null; then
 		    sudo usermod -a -G root $username
+		    echo -e "${LMAGENTA}User $username has been given root permissions${WHITE}"
 		else
-		    echo "User $username does not exist"
+		    echo -e "${RED}User $username does not exist ${WHITE}"
 		fi
+		echo -e "${LMAGENTA}Returning to User Management... ${WHITE}"
 		;;
             "Delete User")
                 read -p "Enter username to delete: " username
                 if id "$username" &>/dev/null; then
-                    sudo deluser $username
+                    sudo userdel -r $username 2>/dev/null
+		    echo -e "${LMAGENTA}User $username has been successfully deleted! ${WHITE}"
                 else
-                    echo "User $username does not exist."
+                    echo -e "${RED}User $username does not exist ${WHITE}"
                 fi
+		echo -e "${LMAGENTA}Returning to User Management... ${WHITE}"
                 ;;
             "Show Connected Users")
-		echo "Showing connected users"
-		who
+		echo -e "${LMAGENTA}Showing connected users${WHITE}"
+		who | awk '{print $1}'
+		echo -e "${LMAGENTA}Returning to User Management... ${WHITE}"
                 ;;
             "Show User Groups")
                 read -p "Enter username to list groups: " username
                 if id "$username" &>/dev/null; then
-                    groups $username
+                    echo -e "${LMAGENTA}Showing groups of $username... ${WHITE}"
+		    groups $username
                 else
-                    echo "User $username does not exist."
+                    echo -e "${RED}User $username does not exist.${WHITE}"
                 fi
+		echo -e "${LMAGENTA}Returning to User Management... ${WHITE}"
                 ;;
             "Disconnect Remote User")
 		read -p "Enter username to disconnect: " username
 		if who | grep -q "$username"; then
-		    terminal=$(who | awk '$1 == "username" { print $2 }')
+		    terminal=$(who | awk -v user="$username" '$1 == user { print $2 }')
 		    sudo pkill -t "$terminal"
+		    echo -e "${LMAGENTA} The remote user ${CYAN}$username ${LMAGENTA}has been disconnected ${WHITE}"
 		else
-		    echo "The remote user $username is not currently connected"
+		    echo -e "${RED}The remote user $username is not currently connected ${WHITE}"
 		fi
+		echo -e "${LMAGENTA}Returning to User Management... ${WHITE}"
                 ;;
             "Change User Group")
 		read -p "Enter the username to have group changed: " username
-		if id "$username" $>/dev/null; then
+		if id "$username" &>/dev/null; then
 		    read -p "Enter the group name to change to: " groupname
-			if id "$groupname" $>/dev/null; then
+			if id "$groupname" &>/dev/null; then
 			    sudo usermod -g $groupname $username
+			    echo -e "${LMAGENTA}User $username has been added to $groupname ${WHITE}"
 			else
-			    echo "Group $groupname does not exist."
+			    echo -e "${RED}Group $groupname does not exist ${WHITE}"
 			fi
 		else
-		    echo "User $username does not exist."
+		    echo -e "${RED}User $username does not exist${WHITE}"
 		fi
+		echo -e "${LMAGENTA}Returning to User Management... ${WHITE}"
                 ;;
             "Back to Main Menu")
 	    	main_menu
                 ;;
-            *) echo "Invalid option! Please select a number from the list."
+            *) echo -e "${RED}Invalid option! Please select a number from the list. ${WHITE}"
                 ;;
         esac
     done
@@ -264,25 +279,28 @@ file_management() {
         case $file_choice in
             "Search for a file in user’s directory")
 		read -p "Enter username of file's location: " username
-		cd $username
-		if [ $? -eq 0 ]; then
+		if pushd "/home/$username" > /dev/null; then
 		    read -p "Enter the name of the file: " filename
-		    if [ -e filename ]; then
+		    if [ -e "$filename" ]; then
 			realpath $filename
 		    else
-			echo "File $filename does not exist."
+			echo -e "${RED}File $filename does not exist. ${WHITE}"
 		    fi
+		    popd > /dev/null
 		else
-		    echo "User $username does not exist."
+		    echo -e "${RED}User $username does not exist. ${WHITE}"
 		fi
+		echo -e "${ORANGE}Returning to File Management... ${WHITE}"
                 ;;
             "Show 10 Largest Files")
-		echo "Displaying your 10 largest files..."
+		echo -e "${ORANGE}Displaying your 10 largest files... ${WHITE}"
 		ls -lS | head
+		echo -e "${ORANGE}Returning to File Management... ${WHITE}"
                 ;;
             "Show 10 Oldest Files")
-		echo "Dislaying your 10 oldest files..."
+		echo -e "${ORANGE}Dislaying your 10 oldest files... ${WHITE}"
 		ls -lt | tail
+		echo -e "${ORANGE}Returning to File Management... ${WHITE}"
                 ;;
             "Send File via Email")
 		read -p "Enter file to be sent by email: " filename
@@ -292,21 +310,22 @@ file_management() {
 			read -p "Are you sure you want to send $filename to $email? [y/n]: " answer
 			if [[ "$answer" == [yY] ]]; then
 			    ATTACHMENT=$(realpath "$filename")
-			    echo "Email sent from Bash." | mailx -s "$filename Attached" -A "ATTACHMENT" "$email"
+			    echo "Email sent from Bash." | mailx -s "$filename Attached" -a "$ATTACHMENT" "$email"
 			    if [ $? -eq 0 ]; then
-				echo "Email sent successfully."
+				echo -e "${ORANGE}Email sent successfully ${WHITE}"
 			    else
-				echo "Email failed to send."
+				echo -e "${RED}Email failed to send ${WHITE}"
 			    fi
 			else
-			    echo "Email will not be sent."
+			    echo -e "${RED}Email will not be sent ${WHITE}"
 			fi
 		    else
-			echo "The email $email is not a valid email."
+			echo -e "${RED}The email $email is not a valid email ${WHITE}"
 		    fi
 		else
-		    echo "The file $filename does not exist in the directory $(pwd)."
+		    echo -e "${RED}The file $filename does not exist in the directory $(pwd) ${WHITE}"
       		fi
+		echo -e "${ORANGE}Returning to File Management... ${WHITE}"
                 ;;
             "Back to Main Menu") 
 	    	main_menu 
