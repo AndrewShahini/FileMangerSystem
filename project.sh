@@ -285,7 +285,7 @@ user_management() {
                 ;;
             "Show Connected Users")
 		echo -e "${LMAGENTA}Showing connected users${WHITE}"
-		who | awk '{print $1}'
+		who
 		echo -e "${LMAGENTA}Returning to User Management... ${WHITE}"
                 ;;
             "Show User Groups")
