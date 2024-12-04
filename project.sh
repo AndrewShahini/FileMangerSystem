@@ -156,7 +156,7 @@ network() {
 	    	if command -v nmcli &> /dev/null; then
 	    		nmcli device status | awk '{print $1}'
 	    		read -p "Enter interface name to enable/disable: " interface
-       			if [ ip link show "$interface" > /dev/null 2>&1 ]; then
+       			if ip link show "$interface" > /dev/null 2>&1; then
       				read -p "Enable (1) or Disable (2): " action
 				if [ "$action" -eq 1 ]; then
   					sudo ip link set $interface up
@@ -179,7 +179,7 @@ network() {
 	    	if command -v nmcli &> /dev/null; then
 	    		nmcli device status | awk '{print $1}'
 	    		read -p "Enter interface name: " interface
-       			if [ ip link show "$interface" > /dev/null 2>&1 ]; then
+       			if ip link show "$interface" > /dev/null 2>&1; then
       				read -p "Enter IP address to set (e.g., 192.168.1.10/24): " ip_address
 				sudo ip addr add $ip_address dev $interface
   				echo "IP address $ip_address set on $interface."
