@@ -104,12 +104,12 @@ backup() {
             "Schedule a Backup") 
                 read -p "Enter the file path to backup: " file_path
                 if [ ! -e "$file_path" ]; then
-                    echo "File path does not exist."
+                    echo -e "${RED}File path does not exist.${WHITE}"
                     continue
                 fi
                 read -p "Enter backup destination: " backup_dest
                 if [ ! -d "$backup_dest" ]; then
-                    echo "Backup destination does not exist."
+                    echo -e "${RED}Backup destination does not exist.${WHITE}"
                     continue
                 fi
                 read -p "Enter day of week for backup (0-6, Sun=0): " day
@@ -118,16 +118,19 @@ backup() {
 
                 cronjob="$minute $hour * * $day cp $file_path $backup_dest && echo \"$(date): Backup completed for $file_path\" >> ~/backup_log.txt"
                 (crontab -l 2>/dev/null; echo "$cronjob") | crontab -
-                echo "Backup scheduled."
+                echo -e "${ORANGE}Backup scheduled. ${WHITE}"
+		echo -e "${BLUE} Returning to Backup Menu... ${WHITE}"
                 ;;
             "Show Last Backup Time") 
                 if [ -f ~/backup_log.txt ]; then
                     tail -n 1 ~/backup_log.txt
                 else
-                    echo "No backup log found."
+                    echo -e "${RED}No backup log found. ${WHITE}"
                 fi
+		echo -e "${BLUE}Returning to Backup Menu... ${WHITE}"
                 ;;
             "Back to Main Menu") 
+	    	echo -e "${BLUE}Returning to Backup Menu...${WHITE}"
 	    	main_menu
                 ;;
             *) echo -e "${RED}Invalid option! Please select a number from the list. ${WHITE}" 
@@ -147,6 +150,7 @@ network() {
 		else
   			ifconfig
      		fi
+       		echo -e "${GREEN}Returning to Network Menu... ${WHITE}"
                 ;;
             "Enable/Disable Network Card") 
 	    	nmcli device status | awk '{print $1}'
@@ -159,8 +163,9 @@ network() {
 	 		sudo ip link set $interface down
     			echo "$interface disabled"
       		else
-			echo "Invalid action selected."
+			echo -e "${RED}Invalid action selected.${WHITE}"
 		fi
+	  	echo -e "${GREEN}Returning to Network Menu...${WHITE}"
                 ;;
             "Set IP Address") 
 	    	nmcli device status | awk '{print $1}'
@@ -168,6 +173,7 @@ network() {
       		read -p "Enter IP address to set (e.g., 192.168.1.10/24): " ip_address
 		sudo ip addr add $ip_address dev $interface
   			echo "IP address $ip_address set on $interface."
+     		echo -e "${GREEN}Returning to Network Menu... ${WHITE}"
                 ;;
             "List Wi-Fi Networks and Connect") 
 	    	if command -v nmcli &> /dev/null; then
@@ -175,13 +181,15 @@ network() {
 	 	read -p "Enter SSID to connect:" ssid
       			nmcli dev wifi connect "$ssid"
 	 	else
-   			echo "The 'ncmli' command is not available. Please install 'NetworkManager' ."
+   			echo -e "${RED}The 'ncmli' command is not available. Please install 'NetworkManager'. ${WHITE}"
       		fi
+		echo -e "${GREEN}Returning to Network Menu...${WHITE}"
                 ;;
             "Back to Main Menu")
+	    	echo -e "${GREEN}Returning to Network Menu...${WHITE}"
 	       main_menu 
                ;;
-            *) echo "Invalid option! Please select a number from the list." 
+            *) echo -e "${RED}Invalid option! Please select a number from the list.${WHITE}" 
               ;;
         esac
     done
