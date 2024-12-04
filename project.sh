@@ -180,7 +180,7 @@ network() {
 	    		nmcli device status | awk '{print $1}'
 	    		read -p "Enter interface name: " interface
        			if ip link show "$interface" > /dev/null 2>&1; then
-      				read -p "Enter IP address to set (e.g., 192.168.1.10/24): " ip_address
+      				read -p "Enter IP address to set (e.g., 192.168.123.255): " ip_address
 				sudo ip addr add $ip_address dev $interface
   				echo "IP address $ip_address set on $interface."
       			else
@@ -262,7 +262,7 @@ user_management() {
 		echo -e "${LMAGENTA}Returning to User Management... ${WHITE}"
 		;;
 	    "Give Root Permission to User")
-     		awk -F: ‘{ print $1 }’ /etc/passwd
+     		awk -F: '{ print $1 }' /etc/passwd
 		read -p "Enter the username to give permission to: " username
 		if id "$username" &>/dev/null; then
 		    sudo usermod -a -G root $username
@@ -273,8 +273,8 @@ user_management() {
 		echo -e "${LMAGENTA}Returning to User Management... ${WHITE}"
 		;;
             "Delete User")
-	    	awk -F: ‘{ print $1 }’ /etc/passwd
-                read -p "Enter username to delete: " username
+		awk -F: '{ print $1 }' /etc/passwd
+		read -p "Enter username to delete: " username
                 if id "$username" &>/dev/null; then
                     sudo userdel -r $username 2>/dev/null
 		    echo -e "${LMAGENTA}User $username has been successfully deleted! ${WHITE}"
@@ -289,7 +289,7 @@ user_management() {
 		echo -e "${LMAGENTA}Returning to User Management... ${WHITE}"
                 ;;
             "Show User Groups")
-	    	awk -F: ‘{ print $1 }’ /etc/passwd
+	    	awk -F: '{ print $1 }' /etc/passwd
                 read -p "Enter username to list groups: " username
                 if id "$username" &>/dev/null; then
                     echo -e "${LMAGENTA}Showing groups of $username... ${WHITE}"
@@ -300,6 +300,7 @@ user_management() {
 		echo -e "${LMAGENTA}Returning to User Management... ${WHITE}"
                 ;;
             "Disconnect Remote User")
+	        awk -F: '{ print $1 }' /etc/passwd
 		read -p "Enter username to disconnect: " username
 		if who | grep -q "$username"; then
 		    terminal=$(who | awk -v user="$username" '$1 == user { print $2 }')
@@ -311,7 +312,7 @@ user_management() {
 		echo -e "${LMAGENTA}Returning to User Management... ${WHITE}"
                 ;;
             "Change User Group")
-	    	awk -F: ‘{ print $1 }’ /etc/passwd
+	    	awk -F: '{ print $1 }' /etc/passwd
 		read -p "Enter the username to have group changed: " username
 		if id "$username" &>/dev/null; then
 		    read -p "Enter the group name to change to: " groupname
