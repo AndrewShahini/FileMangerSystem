@@ -153,27 +153,35 @@ network() {
        		echo -e "${GREEN}Returning to Network Menu... ${WHITE}"
                 ;;
             "Enable/Disable Network Card") 
-	    	nmcli device status | awk '{print $1}'
-	    	read -p "Enter interface name to enable/disable: " interface
-      		read -p "Enable (1) or Disable (2): " action
-		if [ "$action" -eq 1 ]; then
-  			sudo ip link set $interface up
-     			echo "$interface enabled"
-       		elif [ "$action" -eq 2 ]; then
-	 		sudo ip link set $interface down
-    			echo "$interface disabled"
-      		else
-			echo -e "${RED}Invalid action selected.${WHITE}"
+	    	if command -v nmcli &> /dev/null; then
+	    		nmcli device status | awk '{print $1}'
+	    		read -p "Enter interface name to enable/disable: " interface
+      			read -p "Enable (1) or Disable (2): " action
+			if [ "$action" -eq 1 ]; then
+  				sudo ip link set $interface up
+     				echo "$interface enabled"
+       			elif [ "$action" -eq 2 ]; then
+	 			sudo ip link set $interface down
+    				echo "$interface disabled"
+      			else
+				echo -e "${RED}Invalid action selected.${WHITE}"
+			fi
+   		else
+     			echo -e "${RED}The 'ncmli' command is not available. Please install 'NetworkManager'. ${WHITE}"
 		fi
-	  	echo -e "${GREEN}Returning to Network Menu...${WHITE}"
+    		echo -e "${GREEN}Returning to Network Menu...${WHITE}"
                 ;;
             "Set IP Address") 
-	    	nmcli device status | awk '{print $1}'
-	    	read -p "Enter interface name: " interface
-      		read -p "Enter IP address to set (e.g., 192.168.1.10/24): " ip_address
-		sudo ip addr add $ip_address dev $interface
+	    	if command -v nmcli &> /dev/null; then
+	    		nmcli device status | awk '{print $1}'
+	    		read -p "Enter interface name: " interface
+      			read -p "Enter IP address to set (e.g., 192.168.1.10/24): " ip_address
+			sudo ip addr add $ip_address dev $interface
   			echo "IP address $ip_address set on $interface."
-     		echo -e "${GREEN}Returning to Network Menu... ${WHITE}"
+      	    	else	
+	   		echo -e "${RED}The 'ncmli' command is not available. Please install 'NetworkManager'. ${WHITE}"
+      		fi
+		echo -e "${GREEN}Returning to Network Menu... ${WHITE}"
                 ;;
             "List Wi-Fi Networks and Connect") 
 	    	if command -v nmcli &> /dev/null; then
