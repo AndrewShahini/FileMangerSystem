@@ -156,16 +156,20 @@ network() {
 	    	if command -v nmcli &> /dev/null; then
 	    		nmcli device status | awk '{print $1}'
 	    		read -p "Enter interface name to enable/disable: " interface
-      			read -p "Enable (1) or Disable (2): " action
-			if [ "$action" -eq 1 ]; then
-  				sudo ip link set $interface up
-     				echo "$interface enabled"
-       			elif [ "$action" -eq 2 ]; then
-	 			sudo ip link set $interface down
-    				echo "$interface disabled"
-      			else
-				echo -e "${RED}Invalid action selected.${WHITE}"
-			fi
+       			if [ ip link show "$interface" > /dev/null 2>&1 ]; then
+      				read -p "Enable (1) or Disable (2): " action
+				if [ "$action" -eq 1 ]; then
+  					sudo ip link set $interface up
+     					echo "$interface enabled"
+       				elif [ "$action" -eq 2 ]; then
+	 				sudo ip link set $interface down
+    					echo "$interface disabled"
+      				else
+					echo -e "${RED}Invalid action selected.${WHITE}"
+				fi
+    			else
+       				echo -e "${RED} $interface does not exist ${WHITE}"
+	   		fi
    		else
      			echo -e "${RED}The 'ncmli' command is not available. Please install 'NetworkManager'. ${WHITE}"
 		fi
