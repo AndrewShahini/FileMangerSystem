@@ -179,9 +179,13 @@ network() {
 	    	if command -v nmcli &> /dev/null; then
 	    		nmcli device status | awk '{print $1}'
 	    		read -p "Enter interface name: " interface
-      			read -p "Enter IP address to set (e.g., 192.168.1.10/24): " ip_address
-			sudo ip addr add $ip_address dev $interface
-  			echo "IP address $ip_address set on $interface."
+       			if [ ip link show "$interface" > /dev/null 2>&1 ]; then
+      				read -p "Enter IP address to set (e.g., 192.168.1.10/24): " ip_address
+				sudo ip addr add $ip_address dev $interface
+  				echo "IP address $ip_address set on $interface."
+      			else
+	 			echo -e "${RED} $interface does not exist ${WHITE}"
+     			fi
       	    	else	
 	   		echo -e "${RED}The 'ncmli' command is not available. Please install 'NetworkManager'. ${WHITE}"
       		fi
