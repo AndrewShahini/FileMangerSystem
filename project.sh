@@ -55,6 +55,7 @@ system_status() {
             "Check Memory Status") 
             free -h 
 	    echo -e "${BLUE} Returning to System Status Menu... ${WHITE}"
+     	    system_status
      	    ;;
             "Check CPU Temperature") 
                 if command -v sensors &> /dev/null; then
@@ -71,10 +72,12 @@ system_status() {
                     echo -e "${RED}The 'sensors' command is not available. Please install 'lm-sensors'.${WHITE}"
                 fi
 		echo -e "${BLUE} Returning to System Status Menu... ${WHITE}"
+  		system_status
                 ;;
             "List Active Processes") 
             	ps aux 
 	    	echo -e "${BLUE} Returning to System Status Menu... ${WHITE}"
+      		system_status
                 ;;
             "Stop a Process") 
 	    	ps aux | awk '{print $2, $11}'
@@ -86,6 +89,7 @@ system_status() {
                     echo -e "${RED}Invalid PID. Process not found.${WHITE}"
                 fi
 		echo -e "${BLUE} Returning to System Status Menu... ${WHITE}"
+  		system_status
                 ;;
             "Back to Main Menu") 
 	    	main_menu
@@ -120,6 +124,7 @@ backup() {
                 (crontab -l 2>/dev/null; echo "$cronjob") | crontab -
                 echo -e "${ORANGE}Backup scheduled. ${WHITE}"
 		echo -e "${BLUE} Returning to Backup Menu... ${WHITE}"
+  		backup
                 ;;
             "Show Last Backup Time") 
                 if [ -f ~/backup_log.txt ]; then
@@ -128,6 +133,7 @@ backup() {
                     echo -e "${RED}No backup log found. ${WHITE}"
                 fi
 		echo -e "${BLUE}Returning to Backup Menu... ${WHITE}"
+  		backup
                 ;;
             "Back to Main Menu") 
 	    	echo -e "${BLUE}Returning to Backup Menu...${WHITE}"
@@ -151,6 +157,7 @@ network() {
   			ifconfig
      		fi
        		echo -e "${GREEN}Returning to Network Menu... ${WHITE}"
+	 	network
                 ;;
             "Enable/Disable Network Card") 
 	    	if command -v nmcli &> /dev/null; then
@@ -174,6 +181,7 @@ network() {
      			echo -e "${RED}The 'ncmli' command is not available. Please install 'NetworkManager'. ${WHITE}"
 		fi
     		echo -e "${GREEN}Returning to Network Menu...${WHITE}"
+      		network
                 ;;
             "Set IP Address") 
 	    	if command -v nmcli &> /dev/null; then
@@ -190,6 +198,7 @@ network() {
 	   		echo -e "${RED}The 'ncmli' command is not available. Please install 'NetworkManager'. ${WHITE}"
       		fi
 		echo -e "${GREEN}Returning to Network Menu... ${WHITE}"
+  		network
                 ;;
             "List Wi-Fi Networks and Connect") 
 	    	if command -v nmcli &> /dev/null; then
@@ -200,6 +209,7 @@ network() {
    			echo -e "${RED}The 'ncmli' command is not available. Please install 'NetworkManager'. ${WHITE}"
       		fi
 		echo -e "${GREEN}Returning to Network Menu...${WHITE}"
+  		network
                 ;;
             "Back to Main Menu")
 	    	echo -e "${GREEN}Returning to Network Menu...${WHITE}"
@@ -219,6 +229,7 @@ services() {
             "Show Services") 
             systemctl list-units --type=service
 	    echo -e "${YELLOW}Returning to Services Menu...${WHITE}"
+     	    services
                ;;
             "Start a Service")
 	    systemctl list-units --type=service | awk 'NR > 1 {print $1}' | head -n -7
@@ -226,6 +237,7 @@ services() {
             sudo systemctl start $service
             echo -e "${GREEN}$service started.${WHITE}"
 	    echo -e "${YELLOW}Returning to Services Menu...${WHITE}"
+     	    services
                ;;
             "Stop a Service")
 	    systemctl list-units --type=service | awk 'NR > 1 {print $1}' | head -n -7
@@ -233,6 +245,7 @@ services() {
             sudo systemctl stop $service
             echo -e "${ORANGE}$service stopped.${WHITE}"
 	    echo -e "${YELLOW}Returning to Services Menu...${WHITE}"
+            services
                ;;
             "Back to Main Menu") 
 	       main_menu
@@ -260,6 +273,7 @@ user_management() {
 		    echo -e "${LMAGENTA}User $username has been successfully added! ${WHITE}"
 		fi
 		echo -e "${LMAGENTA}Returning to User Management... ${WHITE}"
+  		user_management
 		;;
 	    "Give Root Permission to User")
      		awk -F: '{ print $1 }' /etc/passwd
@@ -271,6 +285,7 @@ user_management() {
 		    echo -e "${RED}User $username does not exist ${WHITE}"
 		fi
 		echo -e "${LMAGENTA}Returning to User Management... ${WHITE}"
+  		user_management
 		;;
             "Delete User")
 		awk -F: '{ print $1 }' /etc/passwd
@@ -282,6 +297,7 @@ user_management() {
                     echo -e "${RED}User $username does not exist ${WHITE}"
                 fi
 		echo -e "${LMAGENTA}Returning to User Management... ${WHITE}"
+  		user_management
                 ;;
             "Show Connected Users")
 		echo -e "${LMAGENTA}Showing connected users${WHITE}"
@@ -298,6 +314,7 @@ user_management() {
                     echo -e "${RED}User $username does not exist.${WHITE}"
                 fi
 		echo -e "${LMAGENTA}Returning to User Management... ${WHITE}"
+  		user_management
                 ;;
             "Disconnect Remote User")
 	        awk -F: '{ print $1 }' /etc/passwd
@@ -310,6 +327,7 @@ user_management() {
 		    echo -e "${RED}The remote user $username is not currently connected ${WHITE}"
 		fi
 		echo -e "${LMAGENTA}Returning to User Management... ${WHITE}"
+  		user_management
                 ;;
             "Change User Group")
 	    	awk -F: '{ print $1 }' /etc/passwd
@@ -326,6 +344,7 @@ user_management() {
 		    echo -e "${RED}User $username does not exist${WHITE}"
 		fi
 		echo -e "${LMAGENTA}Returning to User Management... ${WHITE}"
+  		user_management
                 ;;
             "Back to Main Menu")
 	    	main_menu
@@ -355,16 +374,19 @@ file_management() {
 		    echo -e "${RED}User $username does not exist. ${WHITE}"
 		fi
 		echo -e "${ORANGE}Returning to File Management... ${WHITE}"
+  		file_management
                 ;;
             "Show 10 Largest Files")
 		echo -e "${ORANGE}Displaying your 10 largest files... ${WHITE}"
 		ls -lS | head
 		echo -e "${ORANGE}Returning to File Management... ${WHITE}"
+  		file_management
                 ;;
             "Show 10 Oldest Files")
 		echo -e "${ORANGE}Dislaying your 10 oldest files... ${WHITE}"
 		ls -lt | tail
 		echo -e "${ORANGE}Returning to File Management... ${WHITE}"
+  		file_management
                 ;;
             "Send File via Email")
 		read -p "Enter file to be sent by email: " filename
@@ -390,6 +412,7 @@ file_management() {
 		    echo -e "${RED}The file $filename does not exist in the directory $(pwd) ${WHITE}"
       		fi
 		echo -e "${ORANGE}Returning to File Management... ${WHITE}"
+  		file_management
                 ;;
             "Back to Main Menu") 
 	    	main_menu 
